@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Basketball Game</h1>
+        
+        <div class="section">
+            <h2>Add Players</h2>
+            <div>
+                <input type="text" id="playerName" placeholder="Player name">
+                <button id="addPlayerBtn">Add Player</button>
+            </div>
+            <div class="player-list" id="playerList"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Game Controls</h2>
+            <button id="playBtn">Play Round</button>
+            <button id="resetBtn">Reset Game</button>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
