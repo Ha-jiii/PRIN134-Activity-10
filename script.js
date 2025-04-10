@@ -11,8 +11,8 @@ function randomizer() {
     return Math.random() > 0.5;
 }
 
-function startRound(attempts = 5) {
-    players.forEach(player => {
+function startRound(playerList, attempts = 5) {
+    playerList.forEach(player => {
         player.score = 0;
         for (let i = 0; i < attempts; i++) {
             if (randomizer()) {
@@ -22,51 +22,51 @@ function startRound(attempts = 5) {
     });
 }
 
-function rankingDisplay() {
-    players.sort((a, b) => b.score - a.score);
+function displayRankings(playerList, roundTitle = "Rankings") {
     let resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "<h2>Rankings after this round:</h2>";
-    
-    players.forEach((player, index) => {
-        resultsDiv.innerHTML += `${index + 1}. ${player.name} - ${player.score} points <br>`;
+    resultsDiv.innerHTML += `<h2>${roundTitle}</h2>`;
+    playerList.forEach((player, index) => {
+        resultsDiv.innerHTML += `${index + 1}. ${player.name} - ${player.score} points<br>`;
     });
-
-    tieBreaker();
 }
 
-function tieBreaker(round = 1) {
-    let highestScore = players[0].score;
-    let tiedPlayers = players.filter(player => player.score === highestScore);
+function handleGameResult(playerList, round = 1) {
+    playerList.sort((a, b) => b.score - a.score);
+    let highestScore = playerList[0].score;
+    let tiedPlayers = playerList.filter(player => player.score === highestScore);
 
     if (tiedPlayers.length === 1) {
-        document.getElementById("results").innerHTML += `<h3>The champion is ${tiedPlayers[0].name} with ${tiedPlayers[0].score} points!</h3>`;
+        document.getElementById("results").innerHTML += `<h3>🏆 The champion is ${tiedPlayers[0].name} with ${tiedPlayers[0].score} points!</h3>`;
         return;
     }
 
-    let tiebreakerMessage = `Tie-breaker needed between: ${tiedPlayers.map(p => p.name).join(", ")}`;
-    document.getElementById("results").innerHTML += `<h3>${tiebreakerMessage}</h3>`;
-    startRound(3);
-    rankingDisplay();
+    document.getElementById("results").innerHTML += `<h3>🔥 Tie-breaker Round ${round} ${tiedPlayers.map(p => p.name).join(", ")}</h3>`;
+    startRound(tiedPlayers, 3);
+    displayRankings(tiedPlayers, `Tie-Breaker Round ${round} Results`);
+    handleGameResult(tiedPlayers, round + 1);
 }
+
 
 document.getElementById("addPlayerBtn").addEventListener("click", () => {
     const playerName = document.getElementById("playerName").value;
-    
-    if (playerName) {
+    if (playerName.trim()) {
         players.push(new Player(playerName));
         document.getElementById("playerList").innerHTML += `<p>${playerName}</p>`;
-        document.getElementById("playerName").value = ''; 
+        document.getElementById("playerName").value = '';
     } else {
-        alert("Please enter both the player's name.");
+        alert("Please enter the player's name.");
     }
 });
 
 document.getElementById("playBtn").addEventListener("click", () => {
-    if (players.length > 0) {
-        startRound();
-        rankingDisplay();
+    if (players.length > 1) {
+        document.getElementById("results").innerHTML = '';
+        startRound(players);
+        players.sort((a, b) => b.score - a.score);
+        displayRankings(players);
+        handleGameResult(players);
     } else {
-        alert("Please add players before starting a round.");
+        alert("Add at least two players to start the game.");
     }
 });
 
